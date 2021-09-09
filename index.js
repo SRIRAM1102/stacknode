@@ -138,7 +138,7 @@ async function genpassword(password)
     })
   
 ////////////////////company
-    app.post("/company",async (request,response)=>
+    app.post("/company",auth,async (request,response)=>
     {
       const {logo,company,location,field,description} =request.body;
       const userdata=request.body;
@@ -188,9 +188,9 @@ async function genpassword(password)
 ////////////////////////questions    
     app.post("/question",async (request,response)=>
     {
-      const {question,answer,vote,views} =request.body;
+      const {question} =request.body;
       const userdata=request.body;
-      console.log(question,answer,vote,views);
+      console.log(question);
     
     const client = await createConnection();
         const result = await client
@@ -198,9 +198,9 @@ async function genpassword(password)
           .collection("question")
           .insertOne({
             question:question,
-            answer:answer,
-            vote:vote,
-            views:views
+            answer:[],
+            vote:0,
+            views:0
             });
       response.send(userdata);
     });
