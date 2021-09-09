@@ -138,7 +138,7 @@ async function genpassword(password)
     })
   
 ////////////////////company
-    app.post("/company",auth,async (request,response)=>
+    app.post("/company",async (request,response)=>
     {
       const {logo,company,location,field,description} =request.body;
       const userdata=request.body;
@@ -160,7 +160,7 @@ async function genpassword(password)
       response.send(userdata);
     });
 
-    app.get("/company",async (request,response)=>
+    app.get("/company",auth,async (request,response)=>
     {
      
        const client = await createConnection();
