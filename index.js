@@ -11,14 +11,12 @@ app.use(express.json());//middle ware
 app.use(cors());//middleware support cross 
 dotenv.config();
 
-    //  const PORT=4000;
-     //  const MONGO_URL = "mongodb://localhost"; local path
-    //   const MONGO_URL=" mongodb+srv://sriram1102:sri1102@cluster0.jw0oa.mongodb.net";
+    
                   
-const MONGO_URL=process.env.MONGO_URL;
+const MONGO_URL=process.env.MONGO_URL;  
 const PORT= process.env.PORT;
 
-
+   
 app.get("/",auth,(request,response)=>
     {
       console.log("get done");
@@ -122,7 +120,7 @@ async function genpassword(password)
       
       
       if(ispasstrue)
-        {
+        {     
           console.log(ObjectId(value._id));
           const token=jwt.sign({id:value._id},process.env.UNIQUE_KEY);
           response.send({msg:"sucessfull login",token:token});
@@ -185,6 +183,8 @@ async function genpassword(password)
       response.send(result);
     });
     
+    const a=[]
+ 
 ////////////////////////questions    
     app.post("/question",async (request,response)=>
     {
