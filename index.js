@@ -100,7 +100,7 @@ async function searchedUser(userEmailId)
      const client = await createConnection();
       const result = await client
         .db("mobile")
-        .collection("user")
+        .collection("userlog")
         .find({})
         .toArray();
        
