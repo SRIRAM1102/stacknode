@@ -11,26 +11,11 @@ app.use(express.json());//middle ware
 app.use(cors());//middleware support cross 
 dotenv.config();
 
-    
-                  
 const MONGO_URL=process.env.MONGO_URL;  
 const PORT= process.env.PORT;
 
    
-app.get("/",auth,(request,response)=>
-    {
-      console.log("get done");
-        response.send("hello guvi man");
-    });
-    
-app.post("/us",async (request,response)=>
-    {
-      const userdata=request.body;
-      console.log(userdata)
-      response.send(userdata);
-    });
-
-    export async function createConnection()
+export async function createConnection()
 {
   const client=new MongoClient(MONGO_URL);
   return await client.connect();
@@ -44,121 +29,75 @@ async function genpassword(password)
       return (haspassword);
     }
     
-////////////////////////signup
-
-    app.post("/user/signup",async (request,response)=>
-    {
-      const {name,password,avatar,dateofbirth,gender,profession} =request.body;
-      const userdata=request.body;
-
-     const hashedpassword=await genpassword(password);
-
-    const client = await createConnection();
-        const result = await client
-          .db("mobile")
-          .collection("userlog")
-          .insertOne({
-            name: name,
-            password: hashedpassword,
-            avatar: avatar,
-            dateofbirth:dateofbirth,
-            gender:gender,
-            profession:profession,
-            
-          });
-      response.send(userdata);
-    });
-
-    app.get("/user/signup",async (request,response)=>
-    {
-     
-       const client = await createConnection();
-        const result = await client
-          .db("mobile")
-          .collection("userlog")
-          .find({})
-          .toArray();
-          console.log(result);
-      response.send(result);
-    });
-    app.delete("/user/signup/:id",async (request,response)=>
-    {
-       const {id}=request.params;
-       const client = await createConnection();
-        const result = await client
-          .db("mobile")
-          .collection("userlog")
-          .deleteOne({_id:ObjectId(id)});
-        
-          console.log(result);
-      response.send(result);
-    });
-
  //////////////////////////login
 //  "name":"Raji",
 //  "password":"nopassword"
-    async function searchedUser(name)
+app.post("/login",async(req,res)=>{ 
+  const{emailId,password}=req.body;
+  const value=await searchedUser(emailId);
+
+    if(value!=null)
     {
-        const client = await createConnection();
-        const result = await client
-                       .db("mobile")
-                       .collection("userlog")
-                       .findOne({name:name});
-                     return result;
-    }
-
-    app.post("/login",async (request,response)=>{
-      const {name,password} =request.body;
-      const value=await searchedUser(name);
+      const passindb=value.password;
+      const passinlogin=password;
+      const ispasstrue=await bcrypt.compare(passinlogin,passindb);
+ 
+    
    
-      if(value!=null)
+   if(ispasstrue)
       {
-
-        const passindb=value.password;
-        const passinlogin=password;
-        const ispasstrue=await bcrypt.compare(passinlogin,passindb);
-      
-      
-      if(ispasstrue)
-        {     
-          console.log(ObjectId(value._id));
-          const token=jwt.sign({id:value._id},process.env.UNIQUE_KEY);
-          response.send({msg:"sucessfull login",token:token});
-        }
-        else{
-          response.send({msg:"invalid login"});
-        }
-      } 
-        else
-      {
-        response.send({msg:"wrong user"});
+       const token=jwt.sign({id:value._id},process.env.UNIQUE_KEY);
+         res.send({token:token,id:value._id});
+   }
+      else{
+        res.send({msg:"invalid login"});
       }
-    })
+    }   
+      else
+    {    
+      res.send({msg:"wrong user"});
+    
+    }
+})
+////////////////////////signup
+
+app.post("/signup",async(req,res)=>{
+
+  const {userName,userPassword,emailId} =req.body;
+  const value=await searchedUser(emailId);
+  if(!value){
+    const hashedpassword=await genpassword(userPassword);
+    const client = await createConnection();
+          const result = await client
+            .db("mobile")
+            .collection("userlog")
+            .insertOne({
+              name: userName,
+              email:emailId,
+              password: hashedpassword,
+              avatar:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIy2vRwSRoUACatub962auO36Uo5OjNQ5wCQ&usqp=CAU" 
+                 });
+                }
+else{
+res.send({msg:"existing mailid"})
+}
+  
+})
+
+async function searchedUser(userEmailId)
+{
+  const client = await createConnection();
+  const result = await client 
+                 .db("mobile")
+                 .collection("userlog")
+                 .findOne({"email":userEmailId});
+               return result;
+}
   
 ////////////////////company
-    app.post("/company",async (request,response)=>
-    {
-      const {logo,company,location,field,description} =request.body;
-      const userdata=request.body;
-      console.log(logo,company,location,field,description);
-    
-    const client = await createConnection();
-        const result = await client
-          .db("mobile")
-          .collection("company")
-          .insertOne({
-            logo:logo,
-            company:company,
-            location:location,
-            field:field,
-            description:description
-            
-          });
-          console.log(userdata)
-      response.send(userdata);
-    });
 
-    app.get("/company",auth,async (request,response)=>
+
+    app.get("/company",async (request,response)=>
     {
      
        const client = await createConnection();
@@ -167,55 +106,36 @@ async function genpassword(password)
           .collection("company")
           .find({})
           .toArray();
-          console.log(result);
+         
       response.send(result);
     });
-    app.delete("/company/:id",async (request,response)=>
-    {
-       const {id}=request.params;
-       const client = await createConnection();
-        const result = await client
-          .db("mobile")
-          .collection("company")
-          .deleteOne({_id:ObjectId(id)});
-        
-          console.log(result);
-      response.send(result);
-    });
+
     
-    const a=[]
+
  
 ////////////////////////questions    
     app.post("/question",async (request,response)=>
     {
-      const {question} =request.body;
-      const userdata=request.body;
-      console.log(question);
-    
-    const client = await createConnection();
-        const result = await client
-          .db("mobile")
-          .collection("question")
-          .insertOne({
-            question:question,
-            answer:[],
-            vote:0,
-            views:0
-            });
-      response.send(userdata);
-    });
-    // 
-    app.put("/question/:id",async (request,response)=>
-    {
-      const {id}=request.params;
-      const {ans,vote} =request.body;
-      const userdata=request.body;
+      const {title,body,userid,tags,moment} =request.body;  
       const client = await createConnection();
         const result = await client
           .db("mobile")
           .collection("question")
-          .updateOne({_id:ObjectId(id)},{$set:{vote: vote}}, {$push:{answer:ans}});
-      response.send(userdata);
+          .insertOne({ vote:0,title:title,body:body,answers:[],tag:tags,createdby:userid,time:moment})
+  });
+  
+    app.put("/question/answers",async (request,response)=>
+    {
+     const {answer,questionid,userid,moment} =request.body;
+     const client = await createConnection();
+
+     const obj={answer:answer,userid:userid,time:moment}
+ 
+        const result = await client
+          .db("mobile")
+          .collection("question")
+          .updateOne({_id:ObjectId(questionid)}, {$push:{answers:obj}});
+     
     });
 
     app.get("/question",async (request,response)=>
@@ -227,7 +147,7 @@ async function genpassword(password)
           .collection("question")
           .find({})
           .toArray();
-          console.log(result);
+       
       response.send(result);
     });
 
