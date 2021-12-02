@@ -93,7 +93,19 @@ async function searchedUser(userEmailId)
                  .findOne({"email":userEmailId});
                return result;
 }
-  
+  /////user
+  app.get("/user",async (request,response)=>
+  {
+   
+     const client = await createConnection();
+      const result = await client
+        .db("mobile")
+        .collection("user")
+        .find({})
+        .toArray();
+       
+    response.send(result);
+  });
 ////////////////////company
 
 
