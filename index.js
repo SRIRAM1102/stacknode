@@ -48,7 +48,7 @@ app.post("/login", async (req, res) => {
     const ispasstrue = await bcrypt.compare(passinlogin, passindb);
 
     if (ispasstrue) {
-      const token = jwt.sign({ id: value._id }, process.env.UNIQUE_KEY);
+      const token = jwt.sign({ id: value._id }, 'UNIQUEKEY');
       res.send({ token: token, id: value._id });
     } else {
       res.send({ msg: "invalid login" });
