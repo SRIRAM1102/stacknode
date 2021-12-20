@@ -130,7 +130,7 @@ app.put("/question/answers", async (request, response) => {
     .db("mobile")
     .collection("question")
     .updateOne({ _id: ObjectId(questionid) }, { $push: { answers: obj } });
-});
+}); 
 
 //Get Question
 app.get("/question", async (request, response) => {
@@ -141,7 +141,13 @@ app.get("/question", async (request, response) => {
     .find({})
     .toArray();
 
-  response.send(result);
+    const user = await client
+    .db("mobile")
+    .collection("userlog")
+    .find({})
+    .toArray();
+ 
+  response.send({result:result,user:user});
 });
 
 app.listen(PORT, () => console.log("started"));
