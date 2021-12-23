@@ -134,13 +134,13 @@ app.put("/question/answers", async (request, response) => {
 
 //Update Vote
 app.put("/question/vote", async (request, response) => {
-  const { vote } = request.body;
+  const { id,vote } = request.body;
   const client = await createConnection();
 
   const result = await client
     .db("mobile")
     .collection("question")
-    .updateOne({ _id: ObjectId(questionid) }, {vote:vote} );
+    .updateOne({ _id: ObjectId(id) }, {vote:vote} );
 }); 
 
 //Get Question
