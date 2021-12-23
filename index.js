@@ -133,7 +133,7 @@ app.put("/question/answers", async (request, response) => {
 }); 
 
 //Update Vote
-app.put("/question/answers", async (request, response) => {
+app.put("/question/vote", async (request, response) => {
   const { vote } = request.body;
   const client = await createConnection();
 
