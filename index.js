@@ -132,6 +132,17 @@ app.put("/question/answers", async (request, response) => {
     .updateOne({ _id: ObjectId(questionid) }, { $push: { answers: obj } });
 }); 
 
+//Update Vote
+app.put("/question/answers", async (request, response) => {
+  const { vote } = request.body;
+  const client = await createConnection();
+
+  const result = await client
+    .db("mobile")
+    .collection("question")
+    .updateOne({ _id: ObjectId(questionid) }, {vote:vote} );
+}); 
+
 //Get Question
 app.get("/question", async (request, response) => {
   const client = await createConnection();
