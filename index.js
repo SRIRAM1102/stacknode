@@ -60,7 +60,7 @@ app.post("/login", async (req, res) => {
 
 //signup
 app.post("/signup", async (req, res) => {
-  const { userName, userPassword, emailId } = req.body;
+  const { userName, userPassword, emailId,country,createdat } = req.body;
   const value = await searchedUser(emailId);
   if (!value) {
     const hashedpassword = await genpassword(userPassword);
@@ -69,8 +69,8 @@ app.post("/signup", async (req, res) => {
       name: userName,
       email: emailId,
       password: hashedpassword,
-      avatar:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIy2vRwSRoUACatub962auO36Uo5OjNQ5wCQ&usqp=CAU",
+       createdat:createdat,
+      country:country
     });
   } else {
     res.send({ msg: "existing mailid" });
