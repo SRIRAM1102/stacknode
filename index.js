@@ -135,14 +135,13 @@ app.put("/question/answers", async (request, response) => {
 //Update Vote
 app.put("/question/vote", async (request, response) => {
   const { id,vote,userid } = request.body;
-  console.log (vote)
   const client = await createConnection();
 
   const result = await client
     .db("mobile")
     .collection("question")
-    .updateOne({ _id: ObjectId(id) }, {$set:{vote:vote}},{$push:{votersid:ObjectId(userid)}} );
-}); 
+    .updateMany({ _id: ObjectId(id) }, {$set:{vote:vote},$push:{votersid:userid}} );
+});
 //Get Question
 app.get("/question", async (request, response) => {
   const client = await createConnection();
