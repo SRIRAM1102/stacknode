@@ -69,7 +69,7 @@ app.post("/signup", async (req, res) => {
       name: userName,
       email: emailId,
       password: hashedpassword,
-       createdat:createdat,
+      createdat:createdat,
       country:country
     });
   } else {
@@ -116,6 +116,7 @@ app.post("/question", async (request, response) => {
       tag: tags,
       createdby: userid,
       time: moment,
+      votersid:[]
     });
 });
 
@@ -131,18 +132,17 @@ app.put("/question/answers", async (request, response) => {
     .collection("question")
     .updateOne({ _id: ObjectId(questionid) }, { $push: { answers: obj } });
 }); 
-
 //Update Vote
 app.put("/question/vote", async (request, response) => {
-  const { id,vote } = request.body;
+  const { id,vote,userid } = request.body;
+  console.log (vote)
   const client = await createConnection();
 
   const result = await client
     .db("mobile")
     .collection("question")
-    .updateOne({ _id: ObjectId(id) }, {$set:{vote:vote}} );
+    .updateOne({ _id: ObjectId(id) }, {$set:{vote:vote}},{$push:{votersid:ObjectId(userid)}} );
 }); 
-
 //Get Question
 app.get("/question", async (request, response) => {
   const client = await createConnection();
