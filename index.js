@@ -140,7 +140,7 @@ app.put("/question/vote", async (request, response) => {
   const result = await client
     .db("mobile")
     .collection("question")
-    .updateOne({ _id: ObjectId(id) }, {vote:vote} );
+    .updateOne({ _id: ObjectId(id) }, {$set:{vote:vote}} );
 }); 
 
 //Get Question
