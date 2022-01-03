@@ -100,7 +100,18 @@ app.get("/company", async (request, response) => {
 
   response.send(result);
 });
+//Get Tags
+app.get("/tags", async (request, response) => {
+  const client = await createConnection();
+  const result = await client
+    .db("mobile")
+    .collection("tags")
+    .find({_id:ObjectId('61d122747d4aead1b003387d')})
+    .toArray();
+    var unique = result[0].tagcollection.filter((v, i, a) => a.indexOf(v) === i); 
 
+  response.send(unique);
+});
 //Post Questions
 app.post("/question", async (request, response) => {
   const { title, body, userid, tags, moment } = request.body;
