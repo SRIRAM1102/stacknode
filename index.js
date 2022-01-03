@@ -129,6 +129,10 @@ app.post("/question", async (request, response) => {
       time: moment,
       votersid:[]
     });
+      const user = await client
+    .db("mobile")
+    .collection("tags")
+    .updateOne( {_id:ObjectId('61d122747d4aead1b003387d')},  { $addToSet: { tagcollection: { $each: tags } } } );
 });
 
 //Update Question
