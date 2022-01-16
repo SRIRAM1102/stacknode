@@ -72,6 +72,7 @@ app.post("/signup", async (req, res) => {
       createdat:createdat,
       country:country
     });
+    res.send({ sucess: "user created" });
   } else {
     res.send({ msg: "existing mailid" });
   }
